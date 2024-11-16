@@ -1,59 +1,40 @@
 <?php
 class Transfer {
     public static function new(int $source, int $target, int $amount, mysqli $db) : void {
-        // Walidacja kwoty
-        if ($amount <= 0) {
-            throw new Exception('Kwota przelewu musi być dodatnia');
-        }
-
-        // Sprawdzenie, czy nadawca ma wystarczające środki
-        $sql = "SELECT amount FROM account WHERE accountNo = ?";
-        $query = $db->prepare($sql);
-        $query->bind_param('i', $source);
-        $query->execute();
-        $result = $query->get_result();
-        $row = $result->fetch_assoc();
-
-        // Sprawdzanie, czy konto źródłowe istnieje
-        if ($row === null) {
-            throw new Exception('Konto źródłowe nie istnieje');
-        }
-
-        $currentBalance = $row['amount'];
-        // Sprawdzenie, czy saldo jest wystarczające
-        if ($currentBalance < $amount) {
-            throw new Exception('Niewystarczające środki na koncie źródłowym');
-        }
-
-        // Rozpoczęcie transakcji
-        $db->begin_transaction();
         try {
-            // SQL - Odjęcie kwoty z konta źródłowego
+            //sql - odjęcie kwoty z rachunku 1
             $sql = "UPDATE account SET amount = amount - ? WHERE accountNo = ?";
+            //przygotuj zapytanie
             $query = $db->prepare($sql);
+            //podmień znaki zapytania na zmienne
             $query->bind_param('ii', $amount, $source);
+            //wykonaj zapytanie
             $query->execute();
-
-            // Dodanie kwoty do konta docelowego
+            //dodaj kwotę do rachunku 2
             $sql = "UPDATE account SET amount = amount + ? WHERE accountNo = ?";
+            //przygotuj zapytanie
             $query = $db->prepare($sql);
+            //podmień znaki zapytania na zmienne
             $query->bind_param('ii', $amount, $target);
+            //wykonaj zapytanie
             $query->execute();
-
-            // Zapisanie informacji o przelewie w bazie danych
+            //zapisz informację o przelewie do bazy danych
             $sql = "INSERT INTO transfer (source, target, amount) VALUES (?, ?, ?)";
+            //przygotuj zapytanie
             $query = $db->prepare($sql);
+            //podmień znaki zapytania na zmienne
             $query->bind_param('iii', $source, $target, $amount);
+            //wykonaj zapytanie
             $query->execute();
-
-            // Zatwierdzenie transakcji
+            //zakończ transakcje
             $db->commit();
         } catch (mysqli_sql_exception $e) {
-            // Jeśli wystąpił błąd, wycofaj transakcję
+            //jeżeli wystąpił błąd to wycofaj transakcje
             $db->rollback();
-            // Rzuć wyjątek
-            throw new Exception('Przelew nie powiódł się: ' . $e->getMessage());
+            //rzuć wyjątek
+            throw new Exception('Transfer failed');
         }
+
     }
 }
 ?>
