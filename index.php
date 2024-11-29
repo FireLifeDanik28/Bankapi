@@ -112,7 +112,7 @@ Route::add('/transfer/new', function() use($db) {
         //opcjonalnie
         return json_encode(['error' => 'Invalid token']);
     }
-    //TODO: sprawdz dane i wykonaj przelew
+    //sprawdz dane i wykonaj przelew
     $userId = Token::getUserId($token, $db);
     $source = Account::getAccountNo($userId, $db);
     $target = $dataArray['target'];
