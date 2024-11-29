@@ -35,6 +35,29 @@ class Account {
         return $account['accountNo'];
     }
 
+    //TODO: pokazywanie transferów przez token od usera przelewy od i do.
+    /*
+    public static function getAllTransactions(int $userId, mysqli $db) : int {
+        //zapytanie do bazy danych
+        $sql = "SELECT * FROM `transfer` WHERE `source` = ? OR `target` = ?;";
+        //przygotuj zapytanie
+        $query = $db->prepare($sql);
+        //podmień znaki zapytania na zmienne
+        $query->bind_param('i', $userId);
+        //wykonaj zapytanie
+        $query->execute();
+        //pobierz wynik
+        $result = $query->get_result();
+        //loop in progress xd
+        while(){
+        //skonwertuj na tablicę asocjacyjną
+        $account = $result->fetch_assoc();
+        //zwróć numer rachunku
+        return $account['accountNo'];
+        }
+    }
+    */
+
     //tworzy nowy obiekt na podstawie numeru rachunku pobierając dane z bazy
     //metoda statyczna - nie trzeba tworzyć obiektu klasy żeby jej użyć
     //zwraca obiekt klasy account
