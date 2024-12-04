@@ -35,28 +35,29 @@ class Account {
         return $account['accountNo'];
     }
 
-    //TODO: pokazywanie transferów przez token od usera przelewy od i do.
-    /*
-    public static function getAllTransactions(int $userId, mysqli $db) : int {
+    //pokazywanie transferów przez token od usera przelewy od i do?
+    public static function getAllTransactions(int $userId, mysqli $db) : array {
         //zapytanie do bazy danych
         $sql = "SELECT * FROM `transfer` WHERE `source` = ? OR `target` = ?;";
         //przygotuj zapytanie
         $query = $db->prepare($sql);
         //podmień znaki zapytania na zmienne
-        $query->bind_param('i', $userId);
+        $query->bind_param('ii', $userId, $userId);
         //wykonaj zapytanie
         $query->execute();
         //pobierz wynik
         $result = $query->get_result();
-        //loop in progress xd
-        while(){
-        //skonwertuj na tablicę asocjacyjną
-        $account = $result->fetch_assoc();
-        //zwróć numer rachunku
-        return $account['accountNo'];
-        }
+        //tablica do przechowywania transakcji
+        $transactions = [];
+        //pętla do przetwarzania wyników
+        while ($transaction = $result->fetch_assoc()) {
+        //dodaj transakcję do tablicy
+        $transactions[] = $transaction;
     }
-    */
+    
+    // Zwróć tablicę z transakcjami
+    return $transactions;
+    }
 
     //tworzy nowy obiekt na podstawie numeru rachunku pobierając dane z bazy
     //metoda statyczna - nie trzeba tworzyć obiektu klasy żeby jej użyć
